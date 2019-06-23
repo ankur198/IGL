@@ -1,0 +1,387 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="ISO-8859-1"> 
+<title>MIS Report Search Criteria</title>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.theme.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/common.css"/>
+<link rel="stylesheet" type="text/css" href="css/MISReport.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.min.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.structure.css"/>
+<link rel="stylesheet" type="text/css" href="css/jquery-ui.structure.min.css"/>
+
+<!--<script type="text/javascript"  src ="js/external/jquery/jquery.js"> </script>
+
+
+-->
+<script type="text/javascript"  src ="js/jquery-1.12.1.js"> </script>
+<script type="text/javascript"  src ="js/jquery-1.12.1.min.js"> </script>
+<script type="text/javascript"  src ="js/jquery-ui.js"> </script>
+<script type="text/javascript" src="js/jquery-ui.min.js"> </script>
+
+
+ <script>
+  $(function() {
+ 
+    $(".datepicker12").datepicker({
+   dateFormat:'dd-mm-yy'
+   
+  });
+ 
+    
+    
+  });
+  
+ </script>
+
+
+<script>
+
+ 
+ function GenerateTable()
+ {
+  var request;   
+        
+           var v = document.getElementById("dt1").value; 
+          var v1 = document.getElementById("dt2").value; 
+          var v2 = document.getElementById("app_id").value; 
+          var v3 = document.getElementById("status_id").value; 
+          
+  //var url   = "/DIBD/MisReport.jsp?app_comp="+v2; 
+  var url = "/DIBD/MisReport.jsp?f_date="+v+"&t_date="+v1 +"&app_comp="+v2+"&app_status="+v3;
+ 
+ if(window.XMLHttpRequest){  
+ request=new XMLHttpRequest();  
+ }  
+ else if(window.ActiveXObject)
+ {  
+ request=new ActiveXObject("Microsoft.XMLHTTP");
+ }  
+   
+ try  
+ {  
+ request.onreadystatechange= getInfo;  
+ request.open("GET",url,true);  
+ request.send();  
+
+ }  
+ catch(e)  
+ {  
+   alert("Unable to connect ");  
+ } 
+
+  
+   
+ function getInfo()
+ {
+         
+  if(request.readyState==4)
+   {
+  
+   var val =request.responseText;  
+   var Obj1 = JSON.stringify(val);
+  //alert(val);
+  //var myObject = eval('(' + val + ')');
+    var myObject = JSON.parse(Obj1);
+  alert(myObject);
+  
+         if(myObject== []){
+          alert("Data not found");
+          document.getElementById("tabId").style.display= "none" ;
+         }else{
+          
+         // alert("result:"+myObject);
+          document.getElementById("tabId").style.display="block";
+                 CreateTableFromJSON(myObject); 
+               
+         
+         }
+         }
+        }
+  
+ }
+
+ function CreateTableFromJSON(myBooks)
+ {
+   var col = [];
+         for (var i = 0; i < myBooks.length; i++) {
+             for (var key in myBooks[i]) {
+                 if (col.indexOf(key) === -1) {
+                     col.push(key);
+                 }
+             }
+         }
+
+         // CREATE DYNAMIC TABLE.
+         var table = document.createElement("table");
+
+         // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+         var tr = table.insertRow(-1);                   // TABLE ROW.
+
+         for (var i = 0; i<=col.lenght; i++) {
+             var th = document.createElement("th");      // TABLE HEADER.
+             if(col[i] == 0){
+              th.innerHTML = "<label>Request  Number</label>";
+             }
+             else if(col[i] == 1){
+              th.innerHTML = "<label>Received Date</label>";
+             }
+             else if(col[i] == 2){
+              th.innerHTML = "<label>Subject</label>";
+             }
+             else if(col[i] == 3){
+              th.innerHTML = "<label>Company Name</label>";
+             }
+           
+             tr.appendChild(th);
+            // tr.closed();
+           
+            
+         }
+        
+
+         // ADD JSON DATA TO THE TABLE AS ROWS.
+         for (var i = 0; i < myBooks.length; i++) {
+
+             tr = table.insertRow(-1);
+
+             for (var j = 0; j < col.length; j++) {
+                 var tabCell = tr.insertCell(-1);
+                 if(j == 0){
+                // tabCell.innerHTML = '<a href = "/DIBD/DatatableJSP.jsp?app_form">'<input type="text" name = "appform" id="appid" values="'+ myBooks[i][col[j] +'">' + myBooks[i][col[j]] + '</a>' ;
+                tabCell.innerHTML = '<a href = "/DIBD/DatatableJSP.jsp?appid=' + myBooks[i][col[RequestNumber ]] + '" >' + myBooks[i][col[RequestNumber ]] + '</a>' ;
+                //  tabCell.innerHTML ='<a onClick= "javascript:showApplicantDetails("'+myTable[i][col[j]]+'")">' + myTable[i][col[j]] + '</a>';
+                // tabCell.innerHTML = '<a id="appid" target=_blank href=\"/DIBD/DatatableJSP.jsp?myTable[i][col[j]]" + "\">'  +myBooks[i][col[j]]+ '</a>';
+                     }
+                 if(j == 1){
+                   tabCell.innerHTML = myBooks[i][col[ApplicationDate]];
+                  /*recvddatetime = myTable[i][col[22]];
+      revcddatetimeparts = recvddatetime.split(" ");
+      recvddate = revcddatetimeparts[0];
+      recvddateparts = recvddate.split("-");
+      recvddate = recvddateparts[1] + "/" + recvddateparts[22] + "/" + recvddateparts[0];
+                  tabCell.innerHTML =  recvddate + "<input type='hidden' id='dth1_" + myTable[i][col[22]] + "' value='" + myTable[i][col[22]] + "'>";*/
+                   
+                  }
+                 if(j == 2){
+                  tabCell.innerHTML = myBooks[i][col[Subject]];
+                   
+                  }
+                 if(j == 3){
+                   tabCell.innerHTML = myBooks[i][col[CompanyName]];
+                  }
+                
+              
+                
+                 
+             }
+             
+         }
+
+         // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+         var divContainer = document.getElementById("showData");
+         divContainer.innerHTML = "";
+         divContainer.appendChild(table);
+        // window.location.reload();
+         }
+         
+
+ /*function showApplicantDetails(applid){
+  //alert(applid);
+  var xmlhttp;
+     if (window.XMLHttpRequest){
+      xmlhttp=new XMLHttpRequest();
+     }
+     else{
+      xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+  xmlhttp.onreadystatechange = function(){
+     // alert(xmlhttp.responseText);
+     if(xmlhttp.readyState == 4){
+   if(xmlhttp.status==200){
+       message = xmlhttp.responseText;
+          alert(message);
+   }
+     }
+     };
+     //postdata = "applid=" + applid;
+     //alert(postdata);
+     //var v2 = document.getElementById("app_id").value;    
+     xmlhttp.open("GET", '//DIBD/DatatableJSP.jsp?applid='+applid );
+  xmlhttp.overrideMimeType("text/plain"); 
+     xmlhttp.send();
+   
+ }*/
+ 
+ 
+ 
+ </script>
+ 
+</head>
+<body>
+<div class="container">
+   <header>
+
+<div class="wrapper">
+    <div class="headerImg">
+    <img src="images/logo.png" width="120" height="85" alt="images" /></div>
+    <div class="headerText"><h1>Dial IGL Before Dig  </h1></div>
+    <nav><div class="nav">
+      <% rs = st.executeQuery("select * from cr_login_master where mail_id = '"+uname+"' ");
+           while(rs.next()){
+            cr_name = rs.getString(2);
+            cl_room = rs.getString(3);
+               zone = rs.getString(4);
+            %>
+         <h3 id ="cid" name ="cname">Welcome  &nbsp;<%= uname%>
+       </h3> 
+       
+         
+         <form action = "demo.jsp" name='frmvaluestore'>         
+         <input type='hidden' name='crzone' value=''>
+         </form>      
+               <% }
+               application.setAttribute("name",cr_name); 
+               application.setAttribute("c_room",cl_room);
+               application.setAttribute("zone",zone);%> 
+               
+              <h4> <a href="/DIBD/index.jsp">LogOff</a> </h4>      
+           
+    </div></nav>
+     <div class="menu"> 
+    <ul>
+ <li><a href="http://www.iglonline.net/english/5000_media/Quick_Links/emergency-contact.pdf">Contact Us</a></li>
+ <li><a href="/DIBD/DOCS/CrossingAgreement.docx">Undertaking Format</a></li>  
+ <li><a href="/DIBD/DOCS/Approvedpolicy.pdf">Crossing Policy</a> </li>
+ <li><a href="#">About</a></li>
+    <li><a href="http://www.iglonline.net/Default.aspx">Home</a></li>
+</ul>
+   </div>
+    </div> 
+   </header>
+ 
+ 
+  
+  <section class ="">
+   <div class = "details">
+   <div id ="login">
+   <h2>MIS Report Search Criteria </h2></div>
+
+    <form action = "dem" name="misform" class="register" method = "post">
+   
+   <fieldset class="row1">
+ <legend>Details of Application Form</legend>
+    <p>
+   <label>Received Date From</label>
+    <input type="text" class="datepicker12" name="f_date" id="dt1" Placeholder="dd-mm-yyyy" required />
+    <label> Received Date To</label>
+    <input type="text" class="datepicker12" name="t_date"  id="dt2" Placeholder="dd-mm-yyyy" required />  
+   </p>
+   
+                 <p><label>Applicant Company</label>
+          <select tabindex="1" id="app_id" name="app_comp" class="field-style field-split align-left" Placeholder="SELECT">
+          <option value="" disabled selected>Select your option</option>           
+           <% rs = st.executeQuery("select COMP_NAME from application_form");
+           if(rs!=null){
+           
+           while(rs.next()){ %>
+          
+          <option><%= rs.getString(1)%>
+           </option>
+               <% }
+           }else{%>
+            <script type="text/javascript">
+            alert("Company name is not available");
+            </script>
+           
+          <%  }%> 
+          </select>          
+        
+           <label>Request Purpose</label>
+           <select tabindex="2" id="status_id" name="app_status" class="field-style field-split align-left" Placeholder="SELECT">
+          <option value="" disabled selected>Select your option</option>
+           <% rs = st.executeQuery("select CROSS_PURPOSE from application_form ");
+           if(rs!=null){
+           while(rs.next()){ %>
+           
+           <option><%= rs.getString(1)%>
+           </option>
+            <% }
+           }else{%>
+            <script type="text/javascript">
+            alert("Given Data is not available");
+            </script>
+           
+          
+               <% } %> 
+          </select>          
+            <%
+            connection.close();
+            Thread.sleep(1000);}else{ %>
+              <script type="text/javascript">
+              alert("Database Coneection Failed");
+              </script>
+           <% }
+
+        } catch(Exception e)
+        { 
+             out.println("wrong entry"+e);
+        }
+%>
+                </p>
+              
+             </fieldset>             
+      
+                          
+      </form>  
+    
+        <div class="register">
+        <fieldset class="row2">
+               <div><input type="button" class="button" onclick="GenerateTable()" value="Search"></div>
+              </fieldset></div>
+      <!-- open & close Request Start  -->       
+      </div>  
+      <div class ="details1">   
+     
+<!-- table  -->
+<div id="tabId">
+ <form  class="registered" method ="post" name="dataform">
+   
+   <fieldset class="row1">
+   <legend>Open Request Details</legend>
+
+<div style="overflow-x:auto;">
+<div id="showData">
+</div>
+</div>               </fieldset>
+               <fieldset class="row2">
+               
+               </fieldset>
+        </form>  
+   </div> 
+ 
+ 
+   </div>
+  </section>
+   
+<footer style="clear:both" >
+ 
+ <div class="wrapper">
+  <div id="footer-info">
+  <p><a href="#">Copyright 2018 IGL. All rights reserved.</a></p>
+  <p><a href="#">Terms of Service I Privacy</a></p></div>
+  <div id="footer-links">
+        
+  </div>
+  <div class="clear"></div>
+ </div>
+</footer>
+</div> 
+
+</body>
+
+</html>
+
