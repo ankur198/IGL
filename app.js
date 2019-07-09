@@ -1,10 +1,19 @@
 const express = require("express");
+const basicAuth = require('express-basic-auth')
 
 const data = require("./dbConnection");
 
 const app = express();
 
 app.use(express.static("public"));
+
+app.use(basicAuth({
+    users:{'admin':'1234'},
+    unauthorizedResponse:function(req){
+        console.log(req.auth)
+    },
+}))
+
 app.use(express.json());
 
 app.get("/api/date", function(req, res) {

@@ -1,8 +1,12 @@
+CheckAuth()
+
+
 let x = new Vue({
     el: "#app",
     data: {
         requests: [],
         currentRequest: undefined,
+        isLoggedIn : false,
         filter: {
             allLocations: [],
             location: "",
@@ -28,7 +32,8 @@ let x = new Vue({
                 await fetch("/api/requests", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "Authorization":Authorization
                     },
                     body: JSON.stringify(body)
                 })
@@ -42,8 +47,13 @@ let x = new Vue({
             }
         },
         getAllLocations: async function() {
-            await fetch("/api/requests/locations")
-                .then(data => data.json())
+            console.log(Authorization)
+            await fetch("/api/requests/locations",{
+                headers: new Headers({
+                    "Authorization": Authorization
+                }),
+            })
+            .then(data => data.json())
                 .then(data => (this.filter.allLocations = data));
             this.filter.allLocations.sort();
         },
@@ -63,7 +73,11 @@ let x = new Vue({
         updateStatus: async function() {
             let r = this.requests.filter(this.isSameId)[0];
             r.Status = this.currentRequest.Status;
-            await fetch(`/api/requests/${r.RefId}/status/${r.Status}`);
+            await fetch(`/api/requests/${r.RefId}/status/${r.Status}`,{
+                headers:{
+                    "Authorization":Authorization
+                }
+            });
         },
         isSameId: function(req) {
             return req.RefId == this.currentRequest.RefId;
@@ -73,3 +87,4 @@ let x = new Vue({
         this.getAllLocations();
     }
 });
+
