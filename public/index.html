@@ -22,6 +22,7 @@
                 background-repeat: no-repeat;
                 background-position: center;
                 background-size: cover;
+                background-attachment: fixed;
                 height: 100vh;
             }
         </style>
@@ -126,9 +127,12 @@
                     style="display:block;width:200px"
                 />
 
-                <table class="table table-dark">
+                <table
+                    class="table table-light table-striped"
+                    style="border-radius: 7px;"
+                >
                     <thead>
-                        <tr>
+                        <tr class="m-2">
                             <th class="px-2 py-1">Ref No.</th>
                             <th class="px-2 py-1">Company Name</th>
                             <th class="px-2 py-1">Description</th>
@@ -143,15 +147,23 @@
                             id="requests"
                             class="font-weight-bold"
                         >
-                            <td class="px-2 py-1">{{ r.RefId }}</td>
-                            <td class="px-2 py-1">{{ r.CompanyID }}</td>
-                            <td class="px-2 py-1">{{ r.Description }}</td>
-                            <td class="px-2 py-1">{{ r.Location }}</td>
-                            <td class="px-2 py-1">{{ r.Date }}</td>
-                            <td class="px-2 py-1">
+                            <td class="px-2 py-1 align-middle">
+                                {{ r.RefId }}
+                            </td>
+                            <td class="px-2 py-1 align-middle">
+                                {{ r.CompanyID }}
+                            </td>
+                            <td class="px-2 py-1 align-middle">
+                                {{ r.Description }}
+                            </td>
+                            <td class="px-2 py-1 align-middle">
+                                {{ r.Location }}
+                            </td>
+                            <td class="px-2 py-1 align-middle">{{ r.Date }}</td>
+                            <td class="px-2 py-1 align-middle">
                                 {{ r.Status }}
                             </td>
-                            <td class="px-2 py-1">
+                            <td class="px-2 py-1 align-middle">
                                 <button
                                     class="btn btn-light m-1"
                                     data-toggle="modal"
